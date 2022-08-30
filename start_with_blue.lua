@@ -8,12 +8,36 @@ local quest_status = require("start_with_blue.quest_status");
 quest_status.init_module();
 
 -- ##########################################
+-- constants
+-- ##########################################
+local weapon_names = {
+    "Great Sword",
+    "Slash Axe",
+    "Long Sword",
+    "Light Bow Gun",
+    "Heavy Bow Gun",
+    "Hammer",
+    "Gun Lance",
+    "Lance",
+    "Short Sword",
+    "Dual Blades",
+    "Horn",
+    "Charge Axe",
+    "Insect Glaive",
+    "Bow",
+}
+
+-- ##########################################
 -- script config
 -- ##########################################
 local cfg = json.load_file("start_with_blue_settings.json")
 
 cfg = cfg or {}
 cfg.enabled = cfg.enabled or false
+cfg.weapon = cfg.weapon or {}
+for i=1,14 do
+    cfg.weapon[i] = cfg.weapon[i] or false
+end
 
 re.on_config_save(
     function()
@@ -53,6 +77,8 @@ local function switch_Myset(set_id)
     local master_player = player_manager:call("findMasterPlayer");
     if not master_player then return end
     local player_replace_atk_myset_holder = master_player:get_field("_ReplaceAtkMysetHolder");
+    local weapon_type = master_player:get_field("_playerWeaponType")
+    if not cfg.weapon[weapon_type+1] then return end
 
     -- switch Myset
     player_replace_atk_myset_holder:call("setSelectedMysetIndex", set_id);
@@ -95,6 +121,14 @@ re.on_draw_ui(
 
         local changed, value = imgui.checkbox("Enabled", cfg.enabled)
         if changed then cfg.enabled = value end
+
+        if imgui.tree_node("Weapon settings") then
+            for i=1,14 do
+                local changed, value = imgui.checkbox(weapon_names[i], cfg.weapon[i])
+                if changed then cfg.weapon[i] = value end
+            end
+            imgui.tree_pop()
+        end
 
         imgui.tree_pop()
     end
