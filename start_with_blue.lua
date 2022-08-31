@@ -15,11 +15,11 @@ function IsModuleAvailable(name)
         return true
     else
         for _, searcher in ipairs(package.searchers or package.loaders) do
-        local loader = searcher(name)
-        if type(loader) == 'function' then
-            package.preload[name] = loader
-            return true
-        end
+            local loader = searcher(name)
+            if type(loader) == 'function' then
+                package.preload[name] = loader
+                return true
+            end
         end
         return false
     end
@@ -33,27 +33,6 @@ if IsModuleAvailable(apiPackageName) then
 end
 
 -- ##########################################
--- constants
--- ##########################################
-local weapon_names = {
-    "Great Sword",
-    "Slash Axe",
-    "Long Sword",
-    "Light Bow Gun",
-    "Heavy Bow Gun",
-    "Hammer",
-    "Gun Lance",
-    "Lance",
-    "Short Sword",
-    "Dual Blades",
-    "Horn",
-    "Charge Axe",
-    "Insect Glaive",
-    "Bow",
-}
-
--- ##########################################
->>>>>>> Stashed changes
 -- script config
 -- ##########################################
 local cfg = json.load_file("start_with_blue_settings.json")
