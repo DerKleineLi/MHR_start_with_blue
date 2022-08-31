@@ -51,7 +51,7 @@ end
 local function switch_Myset(set_id)
     local player_manager = sdk.get_managed_singleton("snow.player.PlayerManager");
     local master_player = player_manager:call("findMasterPlayer");
-    if not master_player then return end
+    if not master_player then return false end
     local player_replace_atk_myset_holder = master_player:get_field("_ReplaceAtkMysetHolder");
 
     -- switch Myset
@@ -65,7 +65,7 @@ local function switch_Myset(set_id)
     buff_id = set_id;
 
     update_hud();
-    new_quest_initialized = true;
+    return true;
 end
 
 
@@ -79,7 +79,7 @@ re.on_frame(function()
     -- initialize quest
     if quest_status.in_active_area() then
         if not new_quest_initialized then
-            switch_Myset(1)
+            new_quest_initialized = switch_Myset(1)
         end
     else
         new_quest_initialized = false;
