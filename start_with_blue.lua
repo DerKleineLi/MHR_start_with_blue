@@ -8,6 +8,52 @@ local quest_status = require("start_with_blue.quest_status");
 quest_status.init_module();
 
 -- ##########################################
+-- external API
+-- ##########################################
+function IsModuleAvailable(name)
+    if package.loaded[name] then
+        return true
+    else
+        for _, searcher in ipairs(package.searchers or package.loaders) do
+        local loader = searcher(name)
+        if type(loader) == 'function' then
+            package.preload[name] = loader
+            return true
+        end
+        end
+        return false
+    end
+end
+
+local apiPackageName = "easy_style_switch.api";
+local ESS_api = nil;
+
+if IsModuleAvailable(apiPackageName) then
+    ESS_api = require(apiPackageName);
+end
+
+-- ##########################################
+-- constants
+-- ##########################################
+local weapon_names = {
+    "Great Sword",
+    "Slash Axe",
+    "Long Sword",
+    "Light Bow Gun",
+    "Heavy Bow Gun",
+    "Hammer",
+    "Gun Lance",
+    "Lance",
+    "Short Sword",
+    "Dual Blades",
+    "Horn",
+    "Charge Axe",
+    "Insect Glaive",
+    "Bow",
+}
+
+-- ##########################################
+>>>>>>> Stashed changes
 -- script config
 -- ##########################################
 local cfg = json.load_file("start_with_blue_settings.json")
@@ -65,6 +111,9 @@ local function switch_Myset(set_id)
     buff_id = set_id;
 
     update_hud();
+    if ESS_api then
+        ESS_api.update();
+    end
     return true;
 end
 
