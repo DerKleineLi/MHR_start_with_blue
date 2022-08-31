@@ -91,6 +91,7 @@ local function switch_Myset(set_id)
     buff_id = set_id;
 
     update_hud();
+    new_quest_initialized = true;
 end
 
 
@@ -105,7 +106,6 @@ re.on_frame(function()
     if quest_status.in_active_area() then
         if not new_quest_initialized then
             switch_Myset(1)
-            new_quest_initialized = true;
         end
     else
         new_quest_initialized = false;
