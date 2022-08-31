@@ -78,7 +78,7 @@ local function switch_Myset(set_id)
     if not master_player then return false end
     local player_replace_atk_myset_holder = master_player:get_field("_ReplaceAtkMysetHolder");
     local weapon_type = master_player:get_field("_playerWeaponType")
-    if not cfg.weapon[weapon_type+1] then return end
+    if not cfg.weapon[weapon_type+1] then return true end
 
     -- switch Myset
     player_replace_atk_myset_holder:call("setSelectedMysetIndex", set_id);
