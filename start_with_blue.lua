@@ -73,7 +73,6 @@ local weapon_names = {
 }
 
 -- ##########################################
->>>>>>> Stashed changes
 -- script config
 -- ##########################################
 local cfg = json.load_file("start_with_blue_settings.json")
