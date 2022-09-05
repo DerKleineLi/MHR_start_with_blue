@@ -79,6 +79,7 @@ local cfg = json.load_file("start_with_blue_settings.json")
 
 cfg = cfg or {}
 cfg.enabled = cfg.enabled or false
+cfg.seperate_weapon = cfg.seperate_weapon or false
 cfg.weapon = cfg.weapon or {}
 for i=1,14 do
     cfg.weapon[i] = cfg.weapon[i] or false
@@ -123,7 +124,7 @@ local function switch_Myset(set_id)
     if not master_player then return false end
     local player_replace_atk_myset_holder = master_player:get_field("_ReplaceAtkMysetHolder");
     local weapon_type = master_player:get_field("_playerWeaponType")
-    if not cfg.weapon[weapon_type+1] then return true end
+    if cfg.seperate_weapon and (not cfg.weapon[weapon_type+1]) then return true end
 
     -- switch Myset
     player_replace_atk_myset_holder:call("setSelectedMysetIndex", set_id);
@@ -170,7 +171,10 @@ re.on_draw_ui(
         local changed, value = imgui.checkbox("Enabled", cfg.enabled)
         if changed then cfg.enabled = value end
 
-        if imgui.tree_node("Weapon settings") then
+        local changed, value = imgui.checkbox("Individual settings for weapons", cfg.seperate_weapon)
+        if changed then cfg.seperate_weapon = value end
+
+        if cfg.seperate_weapon and imgui.tree_node("Weapon settings") then
             for i=1,14 do
                 local changed, value = imgui.checkbox(weapon_names[i], cfg.weapon[i])
                 if changed then cfg.weapon[i] = value end
