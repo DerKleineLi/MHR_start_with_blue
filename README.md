@@ -6,12 +6,12 @@ This mod enables you to start the quest with the blue scroll.
 - You need [REFramework](https://www.nexusmods.com/monsterhunterrise/mods/26) to run this mod.
 - Change settings in script generated UI, the supported settings are:
   - Enabled: whether the script functionality is enabled.
+  - Individual settings for weapons: whether to enable individual settings for weapons.
+  - Weapon settings: individual settings for weapons, available only when "Individual settings for weapons" is checked.
 
 ### Credits
 
 [Hugo](https://github.com/DerKleineLi) - creator of this mod and its main contributor.
-
-[GreenComfyTea](https://www.nexusmods.com/monsterhunterrise/users/136480908) - creator of [MHR Overlay](https://www.nexusmods.com/monsterhunterrise/mods/50) mod, which shows how to get quest status.
 
 ### Known issue
 

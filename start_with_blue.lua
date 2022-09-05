@@ -1,13 +1,6 @@
 log.info("[start_with_blue.lua] loaded")
 
 -- ##########################################
--- load modules
--- ##########################################
-local quest_status = require("start_with_blue.quest_status");
-
-quest_status.init_module();
-
--- ##########################################
 -- constants
 -- ##########################################
 local weapon_names = {
@@ -30,7 +23,7 @@ local weapon_names = {
 -- ##########################################
 -- external API
 -- ##########################################
-function IsModuleAvailable(name)
+local function IsModuleAvailable(name)
     if package.loaded[name] then
         return true
     else
@@ -75,7 +68,8 @@ re.on_config_save(
 -- global variables
 -- ##########################################
 local buff_id = nil; -- {0, 1} the current gui icon id, related to buff, 0 for red scroll, 1 for blue scroll.
-local new_quest_initialized = false; -- indicates whether the id is set to 0 when entering a new quest or training area.
+local should_switch = false; -- indicates whether the id is set to 0 when entering a new quest or training area or changing weapon.
+local hooked = false;
 
 -- ##########################################
 -- HUD update
@@ -104,7 +98,7 @@ local function switch_Myset(set_id)
     if not master_player then return false end
     local player_replace_atk_myset_holder = master_player:get_field("_ReplaceAtkMysetHolder");
     local weapon_type = master_player:get_field("_playerWeaponType")
-    if cfg.seperate_weapon and (not cfg.weapon[weapon_type+1]) then return true end
+    -- if cfg.seperate_weapon and (not cfg.weapon[weapon_type+1]) then return true end
 
     -- switch Myset
     player_replace_atk_myset_holder:call("setSelectedMysetIndex", set_id);
@@ -123,6 +117,25 @@ local function switch_Myset(set_id)
     return true;
 end
 
+-- ##########################################
+-- on action set init
+-- ##########################################
+local function on_action_set_init(args)
+    should_switch = cfg.enabled and ((not cfg.seperate_weapon) or cfg.weapon[sdk.to_int64(args[3])+1]);
+    return sdk.PreHookResult.CALL_ORIGINAL;
+end
+
+local function is_master_player()
+    local player_manager = sdk.get_managed_singleton("snow.player.PlayerManager");
+    local master_player = player_manager:call("findMasterPlayer");
+    return master_player;
+end
+
+local function hook()
+    local PlayerReplaceAtkMysetHolder = sdk.find_type_definition("snow.player.PlayerReplaceAtkMysetHolder");
+    local init = PlayerReplaceAtkMysetHolder:get_method("init")
+    sdk.hook(init, on_action_set_init, function(retval) return retval; end)
+end
 
 -- ##########################################
 -- on frame
@@ -131,14 +144,15 @@ end
 re.on_frame(function()
     if not cfg.enabled then return end
 
-    -- initialize quest
-    if quest_status.in_active_area() then
-        if not new_quest_initialized then
-            new_quest_initialized = switch_Myset(1)
-        end
-    else
-        new_quest_initialized = false;
+    if (not hooked) and is_master_player() then
+        hook();
+        hooked = true;
     end
+
+    if should_switch then
+        should_switch = not switch_Myset(1)
+    end
+
 end)
 
 -- ##########################################
